@@ -1,7 +1,7 @@
 This is a fork of dmenu (http://tools.suckless.org/dmenu/) with my personal
 configuration. The original README is README.orig.
 
-* List of patches applied
+* List of patches applied (diffs are available in patch directory)
 
   * vertfull
 
