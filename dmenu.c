@@ -131,7 +131,7 @@ drawmenu(void)
 	drw_rect(drw, 0, 0, mw, mh, 1, 1, 1);
 
 	if (prompt && *prompt) {
-		drw_setscheme(drw, &scheme[SchemeSel]);
+		drw_setscheme(drw, &scheme[SchemeNorm]);
 		drw_text(drw, x, 0, promptw, bh, prompt, 0);
 		x += promptw;
 	}
