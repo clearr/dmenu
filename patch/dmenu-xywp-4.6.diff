@@ -1,0 +1,96 @@
+diff -up dmenu-4.6-xyw/dmenu.c dmenu-4.6-xywp/dmenu.c
+--- dmenu-4.6-xyw/dmenu.c	2016-07-18 13:58:04.113348083 +0900
++++ dmenu-4.6-xywp/dmenu.c	2016-07-18 13:58:36.570132739 +0900
+@@ -40,6 +40,9 @@ static int sw, sh; /* X display screen g
+ static int dmx = 0; /* put dmenu at this x offset */
+ static int dmy = 0; /* put dmenu at this y offset (measured from the bottom if topbar is 0) */
+ static unsigned int dmw = 0; /* make dmenu this wide */
++static Bool dmx_percent = False;
++static Bool dmy_percent = False;
++static Bool dmw_percent = False;
+ static int inputw, promptw;
+ static size_t cursor;
+ static struct item *items = NULL;
+@@ -574,16 +577,38 @@ setup(void)
+ 				if (INTERSECT(x, y, 1, 1, info[i]))
+ 					break;
+ 
+-		x = info[i].x_org + dmx;
+-		y = info[i].y_org + (topbar ? dmy : info[i].height - mh - dmy);
+-		mw = (dmw>0 ? dmw : info[i].width);
++		if (dmw_percent)
++			mw = (dmw>0 ? (int)(info[i].width * ((double)dmw / 100)) : info[i].width);
++		else
++			mw = (dmw>0 ? dmw : info[i].width);
++		if (dmx_percent)
++			x = info[i].x_org + (int)(info[i].width * ((double)dmx / 100)) - mw / 2;
++		else
++			x = info[i].x_org + dmx;
++		if (dmy_percent) {
++			int ty = (int)(info[i].height * ((double)dmy / 100)) - mh / 2;
++			y = info[i].y_org + (topbar ? ty : info[i].height - mh - ty);
++		} else {
++			y = info[i].y_org + (topbar ? dmy : info[i].height - mh - dmy);
++		}
+ 		XFree(info);
+ 	} else
+ #endif
+ 	{
+-		x = dmx;
+-		y = topbar ? dmy : sh - mh - dmy;
+-		mw = (dmw>0 ? dmw : sw);
++		if (dmw_percent)
++			mw = (dmw>0 ? (int)(sw * ((double)dmw / 100)) : sw);
++		else
++			mw = (dmw>0 ? dmw : sw);
++		if (dmx_percent)
++			x = (int)(sw * ((double)dmx / 100)) - mw / 2;
++		else
++			x = dmx;
++		if (dmy_percent) {
++			int ty = (int)(sh * ((double)dmy / 100)) - mh / 2;
++			y = topbar ? ty : sh - mh - ty;
++		} else {
++			y = topbar ? dmy : sh - mh - dmy;
++		}
+ 	}
+ 	promptw = (prompt && *prompt) ? TEXTW(prompt) : 0;
+ 	inputw = MIN(inputw, mw/3);
+@@ -621,6 +646,7 @@ int
+ main(int argc, char *argv[])
+ {
+ 	int i, fast = 0;
++	char *endptr;
+ 
+ 	for (i = 1; i < argc; i++)
+ 		/* these options take no arguments */
+@@ -639,13 +665,22 @@ main(int argc, char *argv[])
+ 		/* these options take one argument */
+ 		else if (!strcmp(argv[i], "-l"))   /* number of lines in vertical list */
+ 			lines = atoi(argv[++i]);
+-		else if (!strcmp(argv[i], "-x"))   /* window x offset */
+-			dmx = atoi(argv[++i]);
+-		else if (!strcmp(argv[i], "-y"))   /* window y offset (from bottom up if -b) */
+-			dmy = atoi(argv[++i]);
+-		else if (!strcmp(argv[i], "-w"))   /* make dmenu this wide */
+-			dmw = atoi(argv[++i]);
+-		else if (!strcmp(argv[i], "-m"))
++		else if (!strcmp(argv[i], "-x")) {   /* window x offset */
++			endptr = NULL;
++			dmx = strtol(argv[++i], &endptr, 10);
++			if (endptr != NULL && *endptr == '%')
++				dmx_percent = True;
++		} else if (!strcmp(argv[i], "-y")) { /* window y offset (from bottom up if -b) */
++			endptr = NULL;
++			dmy = strtol(argv[++i], &endptr, 10);
++			if (endptr != NULL && *endptr == '%')
++				dmy_percent = True;
++		} else if (!strcmp(argv[i], "-w")) { /* make dmenu this wide */
++			endptr = NULL;
++			dmw = strtol(argv[++i], &endptr, 10);
++			if (endptr != NULL && *endptr == '%')
++				dmw_percent = True;
++		} else if (!strcmp(argv[i], "-m"))
+ 			mon = atoi(argv[++i]);
+ 		else if (!strcmp(argv[i], "-p"))   /* adds prompt to left of input field */
+ 			prompt = argv[++i];
