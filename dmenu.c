@@ -147,7 +147,6 @@ drawmenu(void)
 
 	if (lines > 0) {
 		/* draw vertical list */
-		w = mw - x;
 		for (item = curr; item != next; item = item->right) {
 			y += h;
 			if (item == sel)
@@ -157,7 +156,7 @@ drawmenu(void)
 			else
 				drw_setscheme(drw, &scheme[SchemeNorm]);
 
-			drw_text(drw, x, y, w, bh, item->text, 0);
+			drw_text(drw, 0, y, mw, bh, item->text, 0);
 		}
 	} else if (matches) {
 		/* draw horizontal list */
