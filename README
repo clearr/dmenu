@@ -1,4 +1,28 @@
 This is a fork of dmenu (http://tools.suckless.org/dmenu/) with my personal
-configuration.
+configuration. The original README is README.orig.
 
-The original README is README.orig.
+* List of patches applied
+
+  * vertfull
+
+    Available at the official: http://tools.suckless.org/dmenu/patches/vertfull
+
+  * normprompt
+
+    Use norm{bg,fg} color for the prompt instead of sel{bg,fg}color.
+
+  * xywp
+
+    Based on xyw patch, which is available at the official:
+    http://tools.suckless.org/dmenu/patches/xyw
+
+    This adds ability to use percentages in -x, -y and -w option as follows:
+
+        dmenu -x 50% -y 50% -w 25%
+
+    When you use percentages in -x/-y option, the horizontal/vertical center of
+    the menu window is located at the specified position (instead of the
+    top-left corner).
+
+    xyw patch must already be applied before applying this patch
+    (patch/dmenu-xywp-RELEASE.diff, RELEASE is the release version of dmenu).
