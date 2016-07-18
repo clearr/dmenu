@@ -21,8 +21,8 @@ configuration. The original README is README.orig.
         dmenu -x 50% -y 50% -w 25%
 
     When you use percentages in -x/-y option, the horizontal/vertical center of
-    the menu window is located at the specified position (instead of the
-    top-left corner).
+    the menu window (instead of the top-left corner) is located at the specified
+    position.
 
     xyw patch must already be applied before applying this patch
     (patch/dmenu-xywp-RELEASE.diff, RELEASE is the release version of dmenu).
